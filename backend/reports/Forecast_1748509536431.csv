@@ -1,0 +1,6 @@
+"predictedSales","confidenceLevel","forecastPeriod","metrics.rmse","alert"
+,,"Daily",1397,"{""isActive"":false,""message"":""""}"
+,,"Daily",1400,"{""isActive"":false,""message"":""""}"
+,,"Monthly",0,"{""isActive"":false,""message"":""""}"
+,,"Daily",1358.1888888888889,"{""isActive"":true,""message"":""High prediction error""}"
+,,"Daily",1102.0840005879902,"{""isActive"":true,""message"":""High prediction error""}"

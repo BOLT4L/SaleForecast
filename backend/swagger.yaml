@@ -1,0 +1,1790 @@
+openapi: 3.0.0
+info:
+  title: Sales Predictor API
+  version: 1.0.0
+  description: API for sales forecasting, inventory management, and market basket analysis
+servers:
+  - url: http://localhost:5000
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID
+          example: "507f1f77bcf86cd799439011"
+        username:
+          type: string
+          description: Unique username
+          example: "john_doe"
+        email:
+          type: string
+          description: Unique email
+          example: "john.doe@example.com"
+        role:
+          type: string
+          enum: [Manager, Planner, Owner, Admin]
+          description: User role
+          example: "Manager"
+      required: [username, email, role]
+    Sale:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Sale ID
+          example: "507f191e810c19729de860ea"
+        userId:
+          type: string
+          description: User who recorded the sale
+          example: "507f1f77bcf86cd799439011"
+        date:
+          type: string
+          format: date-time
+          description: Sale date
+          example: "2025-05-20T14:30:00Z"
+        totalAmount:
+          type: number
+          description: Total sale amount
+          example: 150.75
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: string
+                description: Product ID
+                example: "507f191e810c19729de860eb"
+              quantity:
+                type: integer
+                description: Quantity sold
+                example: 2
+            required: [productId, quantity]
+          example:
+            - productId: "507f191e810c19729de860eb"
+              quantity: 2
+            - productId: "507f191e810c19729de860ec"
+              quantity: 1
+        promotion:
+          type: boolean
+          description: Whether sale involved a promotion
+          example: true
+      required: [userId, date, totalAmount, items]
+    Forecast:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Forecast ID
+          example: "507f191e810c19729de860ed"
+        userId:
+          type: string
+          description: User who generated the forecast
+          example: "507f1f77bcf86cd799439011"
+        predictedSales:
+          type: number
+          description: Predicted sales amount
+          example: 5000.25
+        confidenceLevel:
+          type: number
+          description: Confidence level (0-100)
+          example: 85
+        forecastPeriod:
+          type: string
+          enum: [Daily, Weekly, Monthly]
+          description: Forecast period
+          example: "Monthly"
+        modelType:
+          type: string
+          enum: [ARIMA, RandomForest]
+          description: Forecasting model used
+          example: "RandomForest"
+        features:
+          type: object
+          properties:
+            seasonality:
+              type: string
+              description: Seasonal factor
+              example: "Meskel"
+            promotion:
+              type: boolean
+              description: Promotion factor
+              example: true
+            economicTrend:
+              type: string
+              description: Economic trend
+              example: "Inflation"
+          example:
+            seasonality: "Meskel"
+            promotion: true
+            economicTrend: "Inflation"
+        metrics:
+          type: object
+          properties:
+            rmse:
+              type: number
+              description: Root Mean Squared Error
+              example: 120.5
+            mae:
+              type: number
+              description: Mean Absolute Error
+              example: 80.3
+            mape:
+              type: number
+              description: Mean Absolute Percentage Error
+              example: 15.7
+          example:
+            rmse: 120.5
+            mae: 80.3
+            mape: 15.7
+        alert:
+          type: object
+          properties:
+            isActive:
+              type: boolean
+              description: Whether alert is active
+              example: false
+            message:
+              type: string
+              description: Alert message
+              example: ""
+          example:
+            isActive: false
+            message: ""
+      required: [userId, predictedSales, forecastPeriod, modelType]
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Product ID
+          example: "507f191e810c19729de860eb"
+        name:
+          type: string
+          description: Product name
+          example: "Laptop"
+        price:
+          type: number
+          description: Product price
+          example: 999.99
+        stockQuantity:
+          type: integer
+          description: Current stock quantity
+          example: 15
+        lowStockThreshold:
+          type: integer
+          description: Threshold for low stock alert
+          example: 10
+        reorderQuantity:
+          type: integer
+          description: Quantity to reorder
+          example: 20
+        category:
+          type: string
+          description: Product category
+          example: "Electronics"
+        lastRestocked:
+          type: string
+          format: date-time
+          description: Last restock date
+          example: "2025-05-15T10:00:00Z"
+      required: [name, price, stockQuantity]
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Report ID
+          example: "507f191e810c19729de860ee"
+        userId:
+          type: string
+          description: User who generated the report
+          example: "507f1f77bcf86cd799439011"
+        reportType:
+          type: string
+          enum: [Sales, Forecast, Inventory, Performance]
+          description: Type of report
+          example: "Sales"
+        format:
+          type: string
+          enum: [csv, pdf]
+          description: File format
+          example: "pdf"
+        filePath:
+          type: string
+          description: Path to report file
+          example: "/reports/Sales_1623456789012.pdf"
+        dateRange:
+          type: object
+          properties:
+            startDate:
+              type: string
+              format: date-time
+              description: Start date of data range
+              example: "2025-05-01T00:00:00Z"
+            endDate:
+              type: string
+              format: date-time
+              description: End date of data range
+              example: "2025-05-31T23:59:59Z"
+          example:
+            startDate: "2025-05-01T00:00:00Z"
+            endDate: "2025-05-31T23:59:59Z"
+      required: [userId, reportType, format, filePath, dateRange]
+    MarketBasket:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Market Basket Analysis ID
+          example: "507f191e810c19729de860ef"
+        userId:
+          type: string
+          description: User who generated the analysis
+          example: "507f1f77bcf86cd799439011"
+        analysisDate:
+          type: string
+          format: date-time
+          description: Date of analysis
+          example: "2025-05-20T09:00:00Z"
+        itemsets:
+          type: array
+          items:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  type: string
+                  description: Product ID
+                  example: "507f191e810c19729de860eb"
+                example:
+                  ["507f191e810c19729de860eb", "507f191e810c19729de860ec"]
+              support:
+                type: number
+                description: Support value
+                example: 0.05
+            example:
+              items: ["507f191e810c19729de860eb", "507f191e810c19729de860ec"]
+              support: 0.05
+          example:
+            - items: ["507f191e810c19729de860eb", "507f191e810c19729de860ec"]
+              support: 0.05
+            - items: ["507f191e810c19729de860ec", "507f191e810c19729de860ed"]
+              support: 0.03
+        rules:
+          type: array
+          items:
+            type: object
+            properties:
+              antecedents:
+                type: array
+                items:
+                  type: string
+                  description: Product ID
+                  example: "507f191e810c19729de860eb"
+                example: ["507f191e810c19729de860eb"]
+              consequents:
+                type: array
+                items:
+                  type: string
+                  description: Product ID
+                  example: "507f191e810c19729de860ec"
+                example: ["507f191e810c19729de860ec"]
+              confidence:
+                type: number
+                description: Confidence value
+                example: 0.75
+              lift:
+                type: number
+                description: Lift value
+                example: 1.2
+            example:
+              antecedents: ["507f191e810c19729de860eb"]
+              consequents: ["507f191e810c19729de860ec"]
+              confidence: 0.75
+              lift: 1.2
+          example:
+            - antecedents: ["507f191e810c19729de860eb"]
+              consequents: ["507f191e810c19729de860ec"]
+              confidence: 0.75
+              lift: 1.2
+            - antecedents: ["507f191e810c19729de860ec"]
+              consequents: ["507f191e810c19729de860ed"]
+              confidence: 0.65
+              lift: 1.1
+      required: [userId, analysisDate]
+paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "jane_smith"
+                email:
+                  type: string
+                  example: "jane.smith@example.com"
+                password:
+                  type: string
+                  example: "SecurePass123!"
+                role:
+                  type: string
+                  enum: [Manager, Planner, Owner, Admin]
+                  example: "Manager"
+              required: [username, email, password, role]
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "400":
+          description: Validation error or username/email taken
+          content:
+            application/json:
+              example:
+                error: "Username or email already taken"
+  /api/auth/login:
+    post:
+      summary: Login user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                password:
+                  type: string
+                  example: "SecurePass123!"
+              required: [username, password]
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "400":
+          description: Invalid credentials
+          content:
+            application/json:
+              example:
+                error: "Invalid credentials"
+  /api/auth/profile:
+    put:
+      summary: Update user profile
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe_new"
+                email:
+                  type: string
+                  example: "john.new@example.com"
+                password:
+                  type: string
+                  example: "NewPass456!"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Profile updated"
+              example:
+                message: "Profile updated"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              example:
+                errors:
+                  - msg: "Valid email is required"
+                    param: "email"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+  /api/sales/upload:
+    post:
+      summary: Upload sales CSV
+      tags: [Sales]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: CSV file with sales data
+              required: [file]
+      responses:
+        "201":
+          description: Sales uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Sales uploaded"
+                  sales:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Sale"
+              example:
+                message: "Sales uploaded"
+                sales:
+                  - id: "507f191e810c19729de860ea"
+                    userId: "507f1f77bcf86cd799439011"
+                    date: "2025-05-20T14:30:00Z"
+                    totalAmount: 150.75
+                    items:
+                      - productId: "507f191e810c19729de860eb"
+                        quantity: 2
+                      - productId: "507f191e810c19729de860ec"
+                        quantity: 1
+                    promotion: true
+        "400":
+          description: Invalid CSV or product not found
+          content:
+            application/json:
+              example:
+                error: "Invalid CSV format"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/sales:
+    get:
+      summary: List sales
+      tags: [Sales]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date-time
+            example: "2025-05-01T00:00:00Z"
+          description: Start date filter
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date-time
+            example: "2025-05-31T23:59:59Z"
+          description: End date filter
+        - in: query
+          name: promotion
+          schema:
+            type: boolean
+            example: true
+          description: Promotion filter
+      responses:
+        "200":
+          description: Sales list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sale"
+              example:
+                - id: "507f191e810c19729de860ea"
+                  userId: "507f1f77bcf86cd799439011"
+                  date: "2025-05-20T14:30:00Z"
+                  totalAmount: 150.75
+                  items:
+                    - productId: "507f191e810c19729de860eb"
+                      quantity: 2
+                    - productId: "507f191e810c19729de860ec"
+                      quantity: 1
+                  promotion: true
+                - id: "507f191e810c19729de860ef"
+                  userId: "507f1f77bcf86cd799439011"
+                  date: "2025-05-21T10:15:00Z"
+                  totalAmount: 89.50
+                  items:
+                    - productId: "507f191e810c19729de860ed"
+                      quantity: 1
+                  promotion: false
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+  /api/sales/{id}:
+    get:
+      summary: Get sale details
+      tags: [Sales]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: "507f191e810c19729de860ea"
+          description: Sale ID
+      responses:
+        "200":
+          description: Sale details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"
+              example:
+                id: "507f191e810c19729de860ea"
+                userId: "507f1f77bcf86cd799439011"
+                date: "2025-05-20T14:30:00Z"
+                totalAmount: 150.75
+                items:
+                  - productId: "507f191e810c19729de860eb"
+                    quantity: 2
+                  - productId: "507f191e810c19729de860ec"
+                    quantity: 1
+                promotion: true
+        "404":
+          description: Sale not found
+          content:
+            application/json:
+              example:
+                error: "Sale not found"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+    put:
+      summary: Update sale
+      tags: [Sales]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: "507f191e810c19729de860ea"
+          description: Sale ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date-time
+                  example: "2025-05-20T15:00:00Z"
+                totalAmount:
+                  type: number
+                  example: 175.25
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: string
+                        example: "507f191e810c19729de860eb"
+                      quantity:
+                        type: integer
+                        example: 3
+                  example:
+                    - productId: "507f191e810c19729de860eb"
+                      quantity: 3
+                    - productId: "507f191e810c19729de860ec"
+                      quantity: 1
+                promotion:
+                  type: boolean
+                  example: false
+      responses:
+        "200":
+          description: Sale updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"
+              example:
+                id: "507f191e810c19729de860ea"
+                userId: "507f1f77bcf86cd799439011"
+                date: "2025-05-20T15:00:00Z"
+                totalAmount: 175.25
+                items:
+                  - productId: "507f191e810c19729de860eb"
+                    quantity: 3
+                  - productId: "507f191e810c19729de860ec"
+                    quantity: 1
+                promotion: false
+        "404":
+          description: Sale not found
+          content:
+            application/json:
+              example:
+                error: "Sale not found"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              example:
+                errors:
+                  - msg: "Invalid total amount"
+                    param: "totalAmount"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+    delete:
+      summary: Delete sale
+      tags: [Sales]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: "507f191e810c19729de860ea"
+          description: Sale ID
+      responses:
+        "200":
+          description: Sale deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Sale deleted"
+              example:
+                message: "Sale deleted"
+        "404":
+          description: Sale not found
+          content:
+            application/json:
+              example:
+                error: "Sale not found"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/forecasts/generate:
+    post:
+      summary: Generate forecast
+      tags: [Forecasts]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                forecastPeriod:
+                  type: string
+                  enum: [Daily, Weekly, Monthly]
+                  example: "Monthly"
+                modelType:
+                  type: string
+                  enum: [ARIMA, RandomForest]
+                  example: "RandomForest"
+                startDate:
+                  type: string
+                  format: date-time
+                  example: "2025-04-01T00:00:00Z"
+                endDate:
+                  type: string
+                  format: date-time
+                  example: "2025-04-30T23:59:59Z"
+              required: [forecastPeriod, modelType, startDate, endDate]
+      responses:
+        "201":
+          description: Forecast generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Forecast"
+              example:
+                id: "507f191e810c19729de860ed"
+                userId: "507f1f77bcf86cd799439011"
+                predictedSales: 5000.25
+                confidenceLevel: 85
+                forecastPeriod: "Monthly"
+                modelType: "RandomForest"
+                features:
+                  seasonality: "Meskel"
+                  promotion: true
+                  economicTrend: "Inflation"
+                metrics:
+                  rmse: 120.5
+                  mae: 80.3
+                  mape: 15.7
+                alert:
+                  isActive: false
+                  message: ""
+        "400":
+          description: Insufficient data or validation error
+          content:
+            application/json:
+              example:
+                error: "Insufficient sales data for forecasting"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/forecasts:
+    get:
+      summary: List forecasts
+      tags: [Forecasts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: forecastPeriod
+          schema:
+            type: string
+            enum: [Daily, Weekly, Monthly]
+            example: "Monthly"
+          description: Filter by forecast period
+      responses:
+        "200":
+          description: Forecasts list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Forecast"
+              example:
+                - id: "507f191e810c19729de860ed"
+                  userId: "507f1f77bcf86cd799439011"
+                  predictedSales: 5000.25
+                  confidenceLevel: 85
+                  forecastPeriod: "Monthly"
+                  modelType: "RandomForest"
+                  features:
+                    seasonality: "Meskel"
+                    promotion: true
+                    economicTrend: "Inflation"
+                  metrics:
+                    rmse: 120.5
+                    mae: 80.3
+                    mape: 15.7
+                  alert:
+                    isActive: false
+                    message: ""
+                - id: "507f191e810c19729de860ee"
+                  userId: "507f1f77bcf86cd799439011"
+                  predictedSales: 4500.75
+                  confidenceLevel: 80
+                  forecastPeriod: "Monthly"
+                  modelType: "ARIMA"
+                  features:
+                    seasonality: "Christmas"
+                    promotion: false
+                    economicTrend: "Stable"
+                  metrics:
+                    rmse: 150.2
+                    mae: 100.4
+                    mape: 18.2
+                  alert:
+                    isActive: false
+                    message: ""
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+  /api/forecasts/updateSettings:
+    put:
+      summary: Update forecast settings
+      tags: [Forecasts]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                features:
+                  type: object
+                  properties:
+                    seasonality:
+                      type: string
+                      example: "Christmas"
+                    promotion:
+                      type: boolean
+                      example: false
+                    economicTrend:
+                      type: string
+                      example: "Stable"
+                  example:
+                    seasonality: "Christmas"
+                    promotion: false
+                    economicTrend: "Stable"
+      responses:
+        "200":
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Forecast settings updated"
+              example:
+                message: "Forecast settings updated"
+        "404":
+          description: No forecasts found
+          content:
+            application/json:
+              example:
+                error: "No forecasts found"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              example:
+                errors:
+                  - msg: "Invalid seasonality value"
+                    param: "features.seasonality"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Admin)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/forecasts/retrain:
+    post:
+      summary: Retrain forecast model
+      tags: [Forecasts]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Model retrained
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Forecast"
+              example:
+                id: "507f191e810c19729de860ef"
+                userId: "507f1f77bcf86cd799439011"
+                predictedSales: 5200.50
+                confidenceLevel: 88
+                forecastPeriod: "Monthly"
+                modelType: "RandomForest"
+                features:
+                  seasonality: "Meskel"
+                  promotion: true
+                  economicTrend: "Inflation"
+                metrics:
+                  rmse: 110.2
+                  mae: 75.6
+                  mape: 14.3
+                alert:
+                  isActive: false
+                  message: ""
+        "400":
+          description: Insufficient data
+          content:
+            application/json:
+              example:
+                error: "Insufficient sales data for retraining"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Admin)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/products:
+    get:
+      summary: List products
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+            example: "Laptop"
+          description: Search by product name
+        - in: query
+          name: category
+          schema:
+            type: string
+            example: "Electronics"
+          description: Filter by category
+      responses:
+        "200":
+          description: Products list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+              example:
+                - id: "507f191e810c19729de860eb"
+                  name: "Laptop"
+                  price: 999.99
+                  stockQuantity: 15
+                  lowStockThreshold: 10
+                  reorderQuantity: 20
+                  category: "Electronics"
+                  lastRestocked: "2025-05-15T10:00:00Z"
+                - id: "507f191e810c19729de860ec"
+                  name: "Smartphone"
+                  price: 699.99
+                  stockQuantity: 8
+                  lowStockThreshold: 10
+                  reorderQuantity: 15
+                  category: "Electronics"
+                  lastRestocked: "2025-05-10T12:00:00Z"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+    post:
+      summary: Create product
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Tablet"
+                price:
+                  type: number
+                  example: 499.99
+                stockQuantity:
+                  type: integer
+                  example: 20
+                description:
+                  type: string
+                  example: "High-performance tablet"
+                category:
+                  type: string
+                  example: "Electronics"
+              required: [name, price, stockQuantity]
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+              example:
+                id: "507f191e810c19729de860ed"
+                name: "Tablet"
+                price: 499.99
+                stockQuantity: 20
+                lowStockThreshold: 10
+                reorderQuantity: 20
+                category: "Electronics"
+                lastRestocked: "2025-05-24T10:00:00Z"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              example:
+                errors:
+                  - msg: "Name is required"
+                    param: "name"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/products/lowStock:
+    get:
+      summary: List low stock products
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Low stock products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+              example:
+                - id: "507f191e810c19729de860ec"
+                  name: "Smartphone"
+                  price: 699.99
+                  stockQuantity: 8
+                  lowStockThreshold: 10
+                  reorderQuantity: 15
+                  category: "Electronics"
+                  lastRestocked: "2025-05-10T12:00:00Z"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+  /api/products/{id}:
+    put:
+      summary: Update product
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: "507f191e810c19729de860eb"
+          description: Product ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Laptop Pro"
+                price:
+                  type: number
+                  example: 1099.99
+                stockQuantity:
+                  type: integer
+                  example: 25
+                description:
+                  type: string
+                  example: "Upgraded laptop model"
+                category:
+                  type: string
+                  example: "Electronics"
+      responses:
+        "200":
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+              example:
+                id: "507f191e810c19729de860eb"
+                name: "Laptop Pro"
+                price: 1099.99
+                stockQuantity: 25
+                lowStockThreshold: 10
+                reorderQuantity: 20
+                category: "Electronics"
+                lastRestocked: "2025-05-24T12:00:00Z"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              example:
+                error: "Product not found"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              example:
+                errors:
+                  - msg: "Invalid price"
+                    param: "price"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager, non-Planner)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+    delete:
+      summary: Delete product
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: "507f191e810c19729de860eb"
+          description: Product ID
+      responses:
+        "200":
+          description: Product deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product deleted"
+              example:
+                message: "Product deleted"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              example:
+                error: "Product not found"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/products/updateSettings:
+    put:
+      summary: Update inventory settings
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lowStockThreshold:
+                  type: integer
+                  example: 15
+                reorderQuantity:
+                  type: integer
+                  example: 25
+                category:
+                  type: string
+                  example: "Electronics"
+              required: [lowStockThreshold, reorderQuantity]
+      responses:
+        "200":
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Inventory settings updated"
+                  modifiedCount:
+                    type: integer
+                    example: 5
+              example:
+                message: "Inventory settings updated"
+                modifiedCount: 5
+        "404":
+          description: No products found
+          content:
+            application/json:
+              example:
+                error: "No products found for update"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              example:
+                errors:
+                  - msg: "Low stock threshold must be a number"
+                    param: "lowStockThreshold"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Admin)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/reports/generate:
+    post:
+      summary: Generate report
+      tags: [Reports]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reportType:
+                  type: string
+                  enum: [Sales, Forecast, Inventory, Performance]
+                  example: "Sales"
+                format:
+                  type: string
+                  enum: [csv, pdf]
+                  example: "pdf"
+                startDate:
+                  type: string
+                  format: date-time
+                  example: "2025-05-01T00:00:00Z"
+                endDate:
+                  type: string
+                  format: date-time
+                  example: "2025-05-31T23:59:59Z"
+              required: [reportType, format, startDate, endDate]
+      responses:
+        "201":
+          description: Report generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report:
+                    $ref: "#/components/schemas/Report"
+                  downloadLink:
+                    type: string
+                    example: "/reports/Sales_1623456789012.pdf"
+              example:
+                report:
+                  id: "507f191e810c19729de860ee"
+                  userId: "507f1f77bcf86cd799439011"
+                  reportType: "Sales"
+                  format: "pdf"
+                  filePath: "/reports/Sales_1623456789012.pdf"
+                  dateRange:
+                    startDate: "2025-05-01T00:00:00Z"
+                    endDate: "2025-05-31T23:59:59Z"
+                downloadLink: "/reports/Sales_1623456789012.pdf"
+        "400":
+          description: No data or validation error
+          content:
+            application/json:
+              example:
+                error: "No data for the selected range"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager, non-Planner, non-Owner, non-Admin)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/reports:
+    get:
+      summary: List reports
+      tags: [Reports]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: reportType
+          schema:
+            type: string
+            enum: [Sales, Forecast, Inventory, Performance]
+            example: "Sales"
+          description: Filter by report type
+      responses:
+        "200":
+          description: Reports list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+              example:
+                - id: "507f191e810c19729de860ee"
+                  userId: "507f1f77bcf86cd799439011"
+                  reportType: "Sales"
+                  format: "pdf"
+                  filePath: "/reports/Sales_1623456789012.pdf"
+                  dateRange:
+                    startDate: "2025-05-01T00:00:00Z"
+                    endDate: "2025-05-31T23:59:59Z"
+                - id: "507f191e810c19729de860ef"
+                  userId: "507f1f77bcf86cd799439011"
+                  reportType: "Inventory"
+                  format: "csv"
+                  filePath: "/reports/Inventory_1623456789013.csv"
+                  dateRange:
+                    startDate: "2025-05-01T00:00:00Z"
+                    endDate: "2025-05-31T23:59:59Z"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+  /api/marketbasket:
+    post:
+      summary: Generate market basket analysis
+      tags: [MarketBasket]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date-time
+                  example: "2025-05-01T00:00:00Z"
+                endDate:
+                  type: string
+                  format: date-time
+                  example: "2025-05-31T23:59:59Z"
+              required: [startDate, endDate]
+      responses:
+        "201":
+          description: Analysis generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketBasket"
+              example:
+                id: "507f191e810c19729de860ef"
+                userId: "507f1f77bcf86cd799439011"
+                analysisDate: "2025-05-20T09:00:00Z"
+                itemsets:
+                  - items:
+                      ["507f191e810c19729de860eb", "507f191e810c19729de860ec"]
+                    support: 0.05
+                  - items:
+                      ["507f191e810c19729de860ec", "507f191e810c19729de860ed"]
+                    support: 0.03
+                rules:
+                  - antecedents: ["507f191e810c19729de860eb"]
+                    consequents: ["507f191e810c19729de860ec"]
+                    confidence: 0.75
+                    lift: 1.2
+                  - antecedents: ["507f191e810c19729de860ec"]
+                    consequents: ["507f191e810c19729de860ed"]
+                    confidence: 0.65
+                    lift: 1.1
+        "400":
+          description: Insufficient data or validation error
+          content:
+            application/json:
+              example:
+                error: "Insufficient sales data for analysis"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Manager)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+    get:
+      summary: List market basket analyses
+      tags: [MarketBasket]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Analyses list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MarketBasket"
+              example:
+                - id: "507f191e810c19729de860ef"
+                  userId: "507f1f77bcf86cd799439011"
+                  analysisDate: "2025-05-20T09:00:00Z"
+                  itemsets:
+                    - items:
+                        ["507f191e810c19729de860eb", "507f191e810c19729de860ec"]
+                      support: 0.05
+                    - items:
+                        ["507f191e810c19729de860ec", "507f191e810c19729de860ed"]
+                      support: 0.03
+                  rules:
+                    - antecedents: ["507f191e810c19729de860eb"]
+                      consequents: ["507f191e810c19729de860ec"]
+                      confidence: 0.75
+                      lift: 1.2
+                    - antecedents: ["507f191e810c19729de860ec"]
+                      consequents: ["507f191e810c19729de860ed"]
+                      confidence: 0.65
+                      lift: 1.1
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+  /api/users:
+    post:
+      summary: Create a new user
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "alice_jones"
+                email:
+                  type: string
+                  example: "alice.jones@example.com"
+                password:
+                  type: string
+                  example: "SecurePass789!"
+                role:
+                  type: string
+                  enum: [Manager, Planner, Owner, Admin]
+                  example: "Planner"
+              required: [username, email, password, role]
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User created"
+                  user:
+                    $ref: "#/components/schemas/User"
+              example:
+                message: "User created"
+                user:
+                  id: "507f1f77bcf86cd799439012"
+                  username: "alice_jones"
+                  email: "alice.jones@example.com"
+                  role: "Planner"
+        "400":
+          description: Validation error or username/email taken
+          content:
+            application/json:
+              example:
+                error: "Username or email already taken"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Admin)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+    get:
+      summary: List users
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: role
+          schema:
+            type: string
+            enum: [Manager, Planner, Owner, Admin]
+            example: "Manager"
+          description: Filter by role
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+              example:
+                - id: "507f1f77bcf86cd799439011"
+                  username: "john_doe"
+                  email: "john.doe@example.com"
+                  role: "Manager"
+                - id: "507f1f77bcf86cd799439012"
+                  username: "alice_jones"
+                  email: "alice.jones@example.com"
+                  role: "Manager"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Admin)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+  /api/users/{id}:
+    put:
+      summary: Update user
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: "507f1f77bcf86cd799439011"
+          description: User ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe_updated"
+                email:
+                  type: string
+                  example: "john.updated@example.com"
+                password:
+                  type: string
+                  example: "NewPass789!"
+                role:
+                  type: string
+                  enum: [Manager, Planner, Owner, Admin]
+                  example: "Admin"
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User updated"
+                  user:
+                    $ref: "#/components/schemas/User"
+              example:
+                message: "User updated"
+                user:
+                  id: "507f1f77bcf86cd799439011"
+                  username: "john_doe_updated"
+                  email: "john.updated@example.com"
+                  role: "Admin"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                error: "User not found"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              example:
+                errors:
+                  - msg: "Valid email is required"
+                    param: "email"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Admin)
+          content:
+            application/json:
+              example:
+                error: "Access denied"
+    delete:
+      summary: Delete user
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: "507f1f77bcf86cd799439011"
+          description: User ID
+      responses:
+        "200":
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User deleted"
+              example:
+                message: "User deleted"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              example:
+                error: "User not found"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+        "403":
+          description: Access denied (non-Admin)
+          content:
+            application/json:
+              example:
+                error: "Access denied"

@@ -1,0 +1,17 @@
+{
+  "name": "sales-forecast-app",
+  "version": "1.0.0",
+  "description": "Sales Forecasting Application - Full Stack",
+  "private": true,
+  "scripts": {
+    "start": "node start.js",
+    "install-all": "cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
+

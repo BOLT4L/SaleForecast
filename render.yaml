@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: sales-forecast-app
+    env: node
+    buildCommand: cd frontend && npm install && npm run build && cd ../backend && npm install
+    startCommand: node start.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      # Add these in Render Dashboard (don't commit secrets):
+      # - MONGO_URI (from MongoDB Atlas)
+      # - REDIS_URL (from Render Redis service)
+      # - JWT_SECRET (generate a strong secret)
+      # - FRONTEND_URL (your Render service URL)
+      # - BASE_URL (your Render service URL)
+      # - VITE_API_URL (your Render service URL + /api)
+      # - EMAIL_USER (optional)
+      # - EMAIL_PASS (optional)
+      # - ADMIN_EMAIL (optional)
+      # - LOW_STOCK_THRESHOLD (optional, default: 10)
+
+databases:
+  - name: sales-forecast-redis
+    plan: free
+    type: redis
+

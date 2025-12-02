@@ -1,0 +1,41 @@
+Collecting mlxtend
+  Using cached mlxtend-0.23.4-py3-none-any.whl.metadata (7.3 kB)
+Requirement already satisfied: scipy>=1.2.1 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from mlxtend) (1.15.3)
+Requirement already satisfied: numpy>=1.16.2 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from mlxtend) (2.2.6)
+Requirement already satisfied: pandas>=0.24.2 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from mlxtend) (2.2.3)
+Requirement already satisfied: scikit-learn>=1.3.1 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from mlxtend) (1.6.1)
+Collecting matplotlib>=3.0.0 (from mlxtend)
+  Using cached matplotlib-3.10.3-cp313-cp313-win_amd64.whl.metadata (11 kB)
+Requirement already satisfied: joblib>=0.13.2 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from mlxtend) (1.5.1)
+Collecting contourpy>=1.0.1 (from matplotlib>=3.0.0->mlxtend)
+  Using cached contourpy-1.3.2-cp313-cp313-win_amd64.whl.metadata (5.5 kB)
+Collecting cycler>=0.10 (from matplotlib>=3.0.0->mlxtend)
+  Using cached cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.22.0 (from matplotlib>=3.0.0->mlxtend)
+  Downloading fonttools-4.58.1-cp313-cp313-win_amd64.whl.metadata (108 kB)
+Collecting kiwisolver>=1.3.1 (from matplotlib>=3.0.0->mlxtend)
+  Using cached kiwisolver-1.4.8-cp313-cp313-win_amd64.whl.metadata (6.3 kB)
+Requirement already satisfied: packaging>=20.0 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from matplotlib>=3.0.0->mlxtend) (25.0)
+Collecting pillow>=8 (from matplotlib>=3.0.0->mlxtend)
+  Downloading pillow-11.2.1-cp313-cp313-win_amd64.whl.metadata (9.1 kB)
+Collecting pyparsing>=2.3.1 (from matplotlib>=3.0.0->mlxtend)
+  Downloading pyparsing-3.2.3-py3-none-any.whl.metadata (5.0 kB)
+Requirement already satisfied: python-dateutil>=2.7 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from matplotlib>=3.0.0->mlxtend) (2.9.0.post0)
+Requirement already satisfied: pytz>=2020.1 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from pandas>=0.24.2->mlxtend) (2025.2)
+Requirement already satisfied: tzdata>=2022.7 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from pandas>=0.24.2->mlxtend) (2025.2)
+Requirement already satisfied: threadpoolctl>=3.1.0 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from scikit-learn>=1.3.1->mlxtend) (3.6.0)
+Requirement already satisfied: six>=1.5 in c:\users\hp\projects\forcast-final\backend\scripts\venv\lib\site-packages (from python-dateutil>=2.7->matplotlib>=3.0.0->mlxtend) (1.17.0)
+Downloading mlxtend-0.23.4-py3-none-any.whl (1.4 MB)
+   ---------------------------------------- 1.4/1.4 MB 2.7 MB/s eta 0:00:00
+Downloading matplotlib-3.10.3-cp313-cp313-win_amd64.whl (8.1 MB)
+   ---------------------------------------- 8.1/8.1 MB 4.5 MB/s eta 0:00:00
+Downloading contourpy-1.3.2-cp313-cp313-win_amd64.whl (223 kB)
+Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Downloading fonttools-4.58.1-cp313-cp313-win_amd64.whl (2.2 MB)
+   ---------------------------------------- 2.2/2.2 MB 7.2 MB/s eta 0:00:00
+Downloading kiwisolver-1.4.8-cp313-cp313-win_amd64.whl (71 kB)
+Downloading pillow-11.2.1-cp313-cp313-win_amd64.whl (2.7 MB)
+   ---------------------------------------- 2.7/2.7 MB 7.2 MB/s eta 0:00:00
+Downloading pyparsing-3.2.3-py3-none-any.whl (111 kB)
+Installing collected packages: pyparsing, pillow, kiwisolver, fonttools, cycler, contourpy, matplotlib, mlxtend
+Successfully installed contourpy-1.3.2 cycler-0.12.1 fonttools-4.58.1 kiwisolver-1.4.8 matplotlib-3.10.3 mlxtend-0.23.4 pillow-11.2.1 pyparsing-3.2.3

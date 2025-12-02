@@ -1,0 +1,52 @@
+Collecting numpy
+  Using cached numpy-2.2.6-cp313-cp313-win_amd64.whl.metadata (60 kB)
+Collecting pandas
+  Downloading pandas-2.2.3-cp313-cp313-win_amd64.whl.metadata (19 kB)
+Collecting scikit-learn
+  Downloading scikit_learn-1.6.1-cp313-cp313-win_amd64.whl.metadata (15 kB)
+Collecting scipy
+  Downloading scipy-1.15.3-cp313-cp313-win_amd64.whl.metadata (60 kB)
+Collecting statsmodels
+  Downloading statsmodels-0.14.4-cp313-cp313-win_amd64.whl.metadata (9.5 kB)
+Collecting joblib
+  Downloading joblib-1.5.1-py3-none-any.whl.metadata (5.6 kB)
+Collecting urllib3
+  Using cached urllib3-2.4.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting packaging
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting Cython
+  Using cached cython-3.1.1-cp313-cp313-win_amd64.whl.metadata (3.6 kB)
+Collecting python-dateutil>=2.8.2 (from pandas)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting pytz>=2020.1 (from pandas)
+  Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting tzdata>=2022.7 (from pandas)
+  Downloading tzdata-2025.2-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting threadpoolctl>=3.1.0 (from scikit-learn)
+  Downloading threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+Collecting patsy>=0.5.6 (from statsmodels)
+  Downloading patsy-1.0.1-py2.py3-none-any.whl.metadata (3.3 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Downloading numpy-2.2.6-cp313-cp313-win_amd64.whl (12.6 MB)
+   ---------------------------------------- 12.6/12.6 MB 5.6 MB/s eta 0:00:00
+Downloading pandas-2.2.3-cp313-cp313-win_amd64.whl (11.5 MB)
+   ---------------------------------------- 11.5/11.5 MB 9.8 MB/s eta 0:00:00
+Downloading scikit_learn-1.6.1-cp313-cp313-win_amd64.whl (11.1 MB)
+   ---------------------------------------- 11.1/11.1 MB 7.0 MB/s eta 0:00:00
+Downloading scipy-1.15.3-cp313-cp313-win_amd64.whl (41.0 MB)
+   ---------------------------------------- 41.0/41.0 MB 6.4 MB/s eta 0:00:00
+Downloading statsmodels-0.14.4-cp313-cp313-win_amd64.whl (9.8 MB)
+   ---------------------------------------- 9.8/9.8 MB 2.3 MB/s eta 0:00:00
+Downloading joblib-1.5.1-py3-none-any.whl (307 kB)
+Using cached urllib3-2.4.0-py3-none-any.whl (128 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Using cached cython-3.1.1-cp313-cp313-win_amd64.whl (2.7 MB)
+Downloading patsy-1.0.1-py2.py3-none-any.whl (232 kB)
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+Downloading threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+Downloading tzdata-2025.2-py2.py3-none-any.whl (347 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Installing collected packages: pytz, urllib3, tzdata, threadpoolctl, six, packaging, numpy, joblib, Cython, scipy, python-dateutil, patsy, scikit-learn, pandas, statsmodels
+Successfully installed Cython-3.1.1 joblib-1.5.1 numpy-2.2.6 packaging-25.0 pandas-2.2.3 patsy-1.0.1 python-dateutil-2.9.0.post0 pytz-2025.2 scikit-learn-1.6.1 scipy-1.15.3 six-1.17.0 statsmodels-0.14.4 threadpoolctl-3.6.0 tzdata-2025.2 urllib3-2.4.0
