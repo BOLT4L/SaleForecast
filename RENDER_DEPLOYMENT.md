@@ -230,6 +230,7 @@ If you need Python ML scripts to run:
 3. **Redis Connection Error**: Use internal Redis URL, not external
 4. **Frontend Not Loading**: Check `VITE_API_URL` matches your backend URL
 5. **CORS Errors**: Ensure `FRONTEND_URL` matches your deployed frontend URL
+6. **Content Security Policy (CSP) Errors**: The Helmet configuration in `server.js` is already configured to allow API connections for both local development and Render deployment. If you see CSP violations, verify your `FRONTEND_URL` and `BASE_URL` environment variables are set correctly.
 
 ### Checking Logs:
 

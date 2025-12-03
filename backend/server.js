@@ -22,16 +22,68 @@ connectDB().catch((err) => {
   console.log("Server will continue to run. Please fix MongoDB connection and restart.");
 });
 
-// Middleware
+// Middleware - CORS configuration
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "http://localhost:5173", // Vite default port
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:5173",
+].filter(Boolean); // Remove undefined values
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000", // Adjust to match your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      // Allow if origin is in allowed list or if in development
+      if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
+        callback(null, true);
+      } else {
+        // In production, only allow specified origins
+        if (process.env.FRONTEND_URL && origin.includes(process.env.FRONTEND_URL)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true, // If you need to send cookies or auth headers
   })
 );
-app.use(helmet());
+
+// Configure Helmet with CSP that allows API connections
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+const backendUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        connectSrc: [
+          "'self'",
+          frontendUrl,
+          backendUrl,
+          "http://localhost:3000",
+          "http://localhost:5000",
+          "https://*.onrender.com", // Allow Render URLs
+          "ws://localhost:3000", // WebSocket for dev
+          "ws://localhost:5000",
+        ],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Needed for React dev
+        styleSrc: ["'self'", "'unsafe-inline'"], // Needed for inline styles
+        imgSrc: ["'self'", "data:", "https:"],
+        fontSrc: ["'self'", "data:"],
+      },
+    },
+    crossOriginEmbedderPolicy: false, // Allow embedding if needed
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

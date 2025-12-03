@@ -4354,3 +4354,4 @@
 {"level":"error","message":"Upload error: Sale validation failed: date: Cast to date failed for value \"Invalid Date\" (type Date) at path \"date\", totalAmount: Cast to Number failed for value \"NaN\" (type number) at path \"totalAmount\"","timestamp":"2025-12-02T07:17:56.909Z"}
 {"level":"info","message":"Checking role:","timestamp":"2025-12-02T07:18:05.499Z"}
 {"level":"info","message":"Forecasts found: 0, Total: 0","timestamp":"2025-12-02T07:18:05.653Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2025-12-03T04:58:49.211Z"}
