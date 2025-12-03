@@ -25,10 +25,8 @@ connectDB().catch((err) => {
 // Middleware - CORS configuration
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  "http://localhost:3000",
-  "http://localhost:5173", // Vite default port
-  "http://127.0.0.1:3000",
-  "http://127.0.0.1:5173",
+  "https://saleforecast-6aak.onrender.com/",
+
 ].filter(Boolean); // Remove undefined values
 
 app.use(
@@ -56,8 +54,8 @@ app.use(
 );
 
 // Configure Helmet with CSP that allows API connections
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-const backendUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+const frontendUrl = process.env.FRONTEND_URL || "https://saleforecast-6aak.onrender.com/";
+const backendUrl = process.env.BASE_URL || `https://saleforecast-6aak.onrender.com/api`;
 
 app.use(
   helmet({
@@ -68,11 +66,8 @@ app.use(
           "'self'",
           frontendUrl,
           backendUrl,
-          "http://localhost:3000",
-          "http://localhost:5000",
-          "https://*.onrender.com", // Allow Render URLs
-          "ws://localhost:3000", // WebSocket for dev
-          "ws://localhost:5000",
+          "https://saleforecast-6aak.onrender.com/",
+          
         ],
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Needed for React dev
         styleSrc: ["'self'", "'unsafe-inline'"], // Needed for inline styles
@@ -137,7 +132,7 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
   console.log(`Server running on port ${PORT}`);
-  console.log(`API available at http://localhost:${PORT}/api`);
+  console.log(`API available at https://saleforecast-6aak.onrender.com/api`);
   console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
 });
 

@@ -5,7 +5,7 @@ export const APP_CONFIG = {
   author: "Your Company",
 
   api: {
-    baseUrl: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+    baseUrl: import.meta.env.VITE_API_URL || "https://saleforecast-6aak.onrender.com/",
     timeout: 30000,
   },
 

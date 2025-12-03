@@ -7,7 +7,7 @@ const options = {
       version: "1.0.0",
       description: "API for sales forecasting and inventory management",
     },
-    servers: [{ url: process.env.BASE_URL || "http://localhost:5000" }],
+    servers: [{ url: process.env.BASE_URL || "https://saleforecast-6aak.onrender.com/api" }],
     components: {
       securitySchemes: {
         bearerAuth: {

@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: API for sales forecasting, inventory management, and market basket analysis
 servers:
-  - url: http://localhost:5000
+  - url: https://saleforecast-6aak.onrender.com/
 components:
   securitySchemes:
     bearerAuth:

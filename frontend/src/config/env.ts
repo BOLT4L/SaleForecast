@@ -14,7 +14,7 @@ function getEnvVar(key: string, defaultValue?: string): string {
 }
 
 export const env: EnvConfig = {
-  API_URL: getEnvVar("VITE_API_URL", "http://localhost:5000/api"),
+  API_URL: getEnvVar("VITE_API_URL", "https://saleforecast-6aak.onrender.com/"),
   NODE_ENV: getEnvVar("NODE_ENV", "development"),
   DEV: import.meta.env.DEV,
   PROD: import.meta.env.PROD,
