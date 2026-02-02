@@ -15,6 +15,7 @@ import {
 import ProfileSettings from "./ProfileSettings";
 import SystemSettings from "./SystemSettings";
 import InventoryForecastSettings from "./InventoryForecastSettings";
+import PaymentSettings from "./PaymentSettings";
 
 const Settings = () => {
   return (
@@ -33,6 +34,7 @@ const Settings = () => {
           <TabsTrigger value="inventory-forecast">
             Inventory & Forecast
           </TabsTrigger>
+          <TabsTrigger value="payment">Payment & Subscription</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -64,6 +66,17 @@ const Settings = () => {
             </CardHeader>
             <CardContent>
               <InventoryForecastSettings />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="payment">
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment & Subscription</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PaymentSettings />
             </CardContent>
           </Card>
         </TabsContent>
