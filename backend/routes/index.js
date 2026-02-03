@@ -8,5 +8,6 @@ router.use("/products", require("./products"));
 router.use("/reports", require("./reports"));
 router.use("/marketbasket", require("./marketBasket"));
 router.use("/users", require("./users"));
+router.use("/subscription", require("./subscription"));
 
 module.exports = router;
